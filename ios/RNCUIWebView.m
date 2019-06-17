@@ -59,11 +59,6 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
   [_webView goForward];
 }
 
-- (void)screenshot
-{
-  [_webView screenshot];
-}
-
 - (void)goBack
 {
   [_webView goBack];

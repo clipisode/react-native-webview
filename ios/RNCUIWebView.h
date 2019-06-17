@@ -31,7 +31,6 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
 
 - (void)goForward;
 - (void)goBack;
-- (void)screenshot;
 - (void)reload;
 - (void)stopLoading;
 - (void)postMessage:(NSString *)message;

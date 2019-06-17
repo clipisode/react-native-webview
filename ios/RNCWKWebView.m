@@ -258,6 +258,11 @@ static NSURLCredential* clientAuthenticationCredential;
     [super removeFromSuperview];
 }
 
+- (void)screenshot
+{
+  [_webView screenshot];
+}
+
 -(void)toggleFullScreenVideoStatusBars
 {
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
