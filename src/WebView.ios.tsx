@@ -145,7 +145,13 @@ class WebView extends React.Component<IOSWebViewProps, State> {
    * Take a snapshot of the current page.
    */
   screenshot = async () => {
-    return 'Taking screenshot!';
+    return RNCWKWebViewManager.screenshot(this.getWebViewHandle());
+    // UIManager.takeSnapshot().then(s)
+    // UIManager.dispatchViewManagerCommand(
+    //   ,
+    //   this.getCommands().screenshot,
+    //   null,
+    // );
   };
 
   /**

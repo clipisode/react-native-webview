@@ -8,6 +8,7 @@
 #import <React/RCTView.h>
 #import <React/RCTDefines.h>
 #import <WebKit/WebKit.h>
+#import <React/RCTBridgeModule.h>
 
 @class RNCWKWebView;
 
@@ -55,7 +56,7 @@
 - (void)injectJavaScript:(NSString *)script;
 - (void)goForward;
 - (void)goBack;
-- (void)screenshot;
+- (void)screenshot:(RCTPromiseResolveBlock)resolve :(RCTPromiseRejectBlock)reject;
 - (void)reload;
 - (void)stopLoading;
 

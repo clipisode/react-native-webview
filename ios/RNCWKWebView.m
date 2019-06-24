@@ -10,6 +10,7 @@
 #import <React/RCTAutoInsetsProtocol.h>
 #import "RNCWKProcessPoolManager.h"
 #import <UIKit/UIKit.h>
+#import <React/RCTBridgeModule.h>
 
 #import "objc/runtime.h"
 
@@ -258,9 +259,28 @@ static NSURLCredential* clientAuthenticationCredential;
     [super removeFromSuperview];
 }
 
-- (void)screenshot
+- (void)screenshot:(RCTPromiseResolveBlock)resolve :(RCTPromiseRejectBlock)reject;
 {
-  [_webView screenshot];
+  WKSnapshotConfiguration *wkSnapshotConfig = [WKSnapshotConfiguration new];
+  wkSnapshotConfig.snapshotWidth = [NSNumber numberWithInt:720];
+  
+  [_webView takeSnapshotWithConfiguration:wkSnapshotConfig completionHandler:^(UIImage * _Nullable snapshotImage, NSError * _Nullable error) {
+//    UIImageWriteToSavedPhotosAlbum(snapshotImage, NULL, NULL, NULL);
+    NSString *tempFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"snapchatsticker.png"];
+    
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"snapchatsticker.png"];
+//
+    NSData *photoData = UIImagePNGRepresentation(snapshotImage);
+
+    BOOL success = [photoData writeToFile:tempFilePath atomically:YES];
+    
+    if (success) {
+      resolve(tempFilePath);
+    } else {
+      reject(@"Error", @"Unknown", NULL);
+    }
+  }];
 }
 
 -(void)toggleFullScreenVideoStatusBars
