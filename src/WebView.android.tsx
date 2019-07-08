@@ -213,7 +213,7 @@ class WebView extends React.Component<AndroidWebViewProps, State> {
   };
 
   screenshot = () => {
-    return RNCWebView.screenshot(this.getWebViewHandle());
+    return UIManager.screenshot(this.getWebViewHandle());
   };
 
   render() {

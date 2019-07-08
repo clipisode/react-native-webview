@@ -32,6 +32,7 @@ export interface CustomUIManager extends UIManagerStatic {
     command: Function,
     params: object | null,
   ) => void;
+  screenshot: (viewHandle: number) => Promise<string>;
   RNCUIWebView: {
     Commands: WebViewCommands;
   };
