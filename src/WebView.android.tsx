@@ -212,6 +212,10 @@ class WebView extends React.Component<AndroidWebViewProps, State> {
     }
   };
 
+  screenshot = () => {
+    return RNCWebView.screenshot(this.getWebViewHandle());
+  };
+
   render() {
     const {
       onMessage,
@@ -255,8 +259,8 @@ class WebView extends React.Component<AndroidWebViewProps, State> {
       }
     }
 
-    const NativeWebView
-      = (nativeConfig.component as typeof NativeWebViewAndroid) || RNCWebView;
+    const NativeWebView =
+      (nativeConfig.component as typeof NativeWebViewAndroid) || RNCWebView;
 
     const onShouldStartLoadWithRequest = createOnShouldStartLoadWithRequest(
       this.onShouldStartLoadWithRequestCallback,

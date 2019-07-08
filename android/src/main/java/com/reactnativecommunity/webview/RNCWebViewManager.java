@@ -6,7 +6,9 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Picture;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -61,6 +63,7 @@ import com.reactnativecommunity.webview.events.TopShouldStartLoadWithRequestEven
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -388,6 +391,37 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
   @ReactProp(name = "onContentSizeChange")
   public void setOnContentSizeChange(WebView view, boolean sendContentSizeChangeEvents) {
     ((RNCWebView) view).setSendContentSizeChangeEvents(sendContentSizeChangeEvents);
+  }
+
+  @ReactMethod
+  public void screenshot(WebView webView, Promise promise) {
+    Picture picture = webView.capturePicture();
+    Bitmap  b = Bitmap.createBitmap( picture.getWidth(),
+      picture.getHeight(), Bitmap.Config.ARGB_8888);
+    Canvas c = new Canvas( b );
+
+    picture.draw( c );
+    FileOutputStream fos = null;
+
+    try {
+      Context ctx = webView.getContext();
+
+      File cacheDir = ctx.getCacheDir();
+      File file = File.createTempFile("screenshot.png", null, cacheDir);
+      String path = file.getAbsolutePath();
+
+      fos = new FileOutputStream(path);
+      if (fos != null)
+      {
+        b.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        fos.close();
+      }
+
+      promise.resolve(path);
+    }
+    catch(Exception e) {
+      promise.reject(e);
+    }
   }
 
   @ReactProp(name = "mixedContentMode")
