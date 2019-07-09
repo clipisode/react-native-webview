@@ -33,6 +33,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
 import com.facebook.react.views.scroll.OnScrollDispatchHelper;
@@ -63,6 +65,7 @@ import com.reactnativecommunity.webview.events.TopShouldStartLoadWithRequestEven
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

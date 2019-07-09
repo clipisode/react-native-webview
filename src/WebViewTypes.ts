@@ -73,7 +73,9 @@ export class NativeWebViewIOS extends NativeWebViewIOSBase {}
 // eslint-disable-next-line react/prefer-stateless-function
 declare class NativeWebViewAndroidComponent extends Component<
   AndroidNativeWebViewProps
-> {}
+> {
+  screenshot(): Promise<string>;
+}
 declare const NativeWebViewAndroidBase: Constructor<NativeMethodsMixin> &
   typeof NativeWebViewAndroidComponent;
 export class NativeWebViewAndroid extends NativeWebViewAndroidBase {}

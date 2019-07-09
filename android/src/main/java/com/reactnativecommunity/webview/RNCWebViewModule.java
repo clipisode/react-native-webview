@@ -6,6 +6,9 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Picture;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -15,9 +18,11 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import android.util.Log;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.facebook.react.bridge.ActivityEventListener;
@@ -25,11 +30,16 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.PermissionAwareActivity;
 import com.facebook.react.modules.core.PermissionListener;
+import com.facebook.react.uimanager.NativeViewHierarchyManager;
+import com.facebook.react.uimanager.UIBlock;
+import com.facebook.react.uimanager.UIManagerModule;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -77,6 +87,42 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
   }
 
   @ReactMethod
+  public void screenshot(final int viewId, final Promise promise) {
+    withMyView(viewId, promise, new WebViewHandler() {
+        @Override
+        public void handle(WebView view) {
+          Picture picture = view.capturePicture();
+          Bitmap b = Bitmap.createBitmap( picture.getWidth(),
+            picture.getHeight(), Bitmap.Config.ARGB_8888);
+          Canvas c = new Canvas( b );
+
+          picture.draw( c );
+          FileOutputStream fos = null;
+
+          try {
+            Context ctx = view.getContext();
+
+            File cacheDir = ctx.getCacheDir();
+            File file = File.createTempFile("screenshot.png", null, cacheDir);
+            String path = file.getAbsolutePath();
+
+            fos = new FileOutputStream(path);
+            if (fos != null)
+            {
+              b.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+              fos.close();
+            }
+
+            promise.resolve(path);
+          }
+          catch(Exception e) {
+            promise.reject(e);
+          }
+        }
+    });
+  }
+
+  @ReactMethod
   public void isFileUploadSupported(final Promise promise) {
     Boolean result = false;
     int current = Build.VERSION.SDK_INT;
@@ -87,6 +133,28 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
       result = true;
     }
     promise.resolve(result);
+  }
+
+  abstract class WebViewHandler {
+    abstract void handle(WebView view);
+  }
+
+  private void withMyView(final int viewId, final Promise promise, final WebViewHandler handler) {
+    UIManagerModule uiManager = getReactApplicationContext().getNativeModule(UIManagerModule.class);
+    uiManager.addUIBlock(new UIBlock() {
+      @Override
+        public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            View view = nativeViewHierarchyManager.resolveView(viewId);
+            if (view instanceof WebView) {
+                WebView webView = (WebView) view;
+                handler.handle(webView);
+            }
+            else {
+                Log.e("RNCWebView", "Expected view to be instance of MyView, but found: " + view);
+                promise.reject("my_view", "Unexpected view type");
+            }
+        }
+    });
   }
 
   public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {

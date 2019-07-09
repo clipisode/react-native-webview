@@ -10,6 +10,8 @@ import {
   findNodeHandle,
 } from 'react-native';
 
+const RNCWebViewFunctions = NativeModules.RNCWebView;
+
 import invariant from 'invariant';
 
 import {
@@ -213,7 +215,7 @@ class WebView extends React.Component<AndroidWebViewProps, State> {
   };
 
   screenshot = () => {
-    return UIManager.screenshot(this.getWebViewHandle());
+    return RNCWebViewFunctions.screenshot(this.getWebViewHandle());
   };
 
   render() {
