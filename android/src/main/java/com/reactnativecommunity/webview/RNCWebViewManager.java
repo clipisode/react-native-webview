@@ -396,37 +396,6 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
     ((RNCWebView) view).setSendContentSizeChangeEvents(sendContentSizeChangeEvents);
   }
 
-  @ReactMethod
-  public void screenshot(WebView webView, Promise promise) {
-    Picture picture = webView.capturePicture();
-    Bitmap  b = Bitmap.createBitmap( picture.getWidth(),
-      picture.getHeight(), Bitmap.Config.ARGB_8888);
-    Canvas c = new Canvas( b );
-
-    picture.draw( c );
-    FileOutputStream fos = null;
-
-    try {
-      Context ctx = webView.getContext();
-
-      File cacheDir = ctx.getCacheDir();
-      File file = File.createTempFile("screenshot.png", null, cacheDir);
-      String path = file.getAbsolutePath();
-
-      fos = new FileOutputStream(path);
-      if (fos != null)
-      {
-        b.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        fos.close();
-      }
-
-      promise.resolve(path);
-    }
-    catch(Exception e) {
-      promise.reject(e);
-    }
-  }
-
   @ReactProp(name = "mixedContentMode")
   public void setMixedContentMode(WebView view, @Nullable String mixedContentMode) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -103,13 +103,14 @@ public class RNCWebViewModule extends ReactContextBaseJavaModule implements Acti
             Context ctx = view.getContext();
 
             File cacheDir = ctx.getCacheDir();
-            File file = File.createTempFile("screenshot.png", null, cacheDir);
-            String path = file.getAbsolutePath();
+            File file = new File(cacheDir, "snapchat/screenshot.png");
+            file.getParentFile().mkdir();
 
+            String path = file.getAbsolutePath();
             fos = new FileOutputStream(path);
             if (fos != null)
             {
-              b.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+              b.compress(Bitmap.CompressFormat.PNG, 100, fos);
               fos.close();
             }
 
